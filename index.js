@@ -61,7 +61,7 @@ app.message(linkRegex, async ({ message }) => {
         const channelId = await message.text.match(linkRegex)[1];
         const tsre = await message.text.match(linkRegex)[2];
 
-        const ts = `${tsre.substring(0, 10)}.${tsre.substring(11, 17)}`;
+        const ts = `${tsre.substring(0, 10)}.${tsre.substring(10, 17)}`;
 
         await deleteThread(channelId, ts);
         await app.client.reactions.remove({
