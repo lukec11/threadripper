@@ -1,0 +1,16 @@
+{
+  "name": "threadripper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+	"start": "node index.js"
+  },
+  "author": "lukec11 <me@lukec.me>",
+  "license": "MIT",
+  "dependencies": {
+    "@slack/bolt": "^2.2.3",
+    "dotenv": "^8.2.0"
+  }
+}
