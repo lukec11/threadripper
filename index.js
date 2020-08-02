@@ -106,12 +106,6 @@ app.shortcut('purge_thread', async ({ shortcut, ack, respond }) => {
             throw 'UserNotAuthed';
         }
 
-        const msgLink = await app.client.chat.getPermalink({
-            token: process.env.SLACK_OAUTH_TOKEN,
-            channel: shortcut.channel.id,
-            message_ts: shortcut.message.ts,
-        });
-
         await deleteThread(shortcut.channel.id, shortcut.message_ts);
     } catch (err) {
         console.error(err);
