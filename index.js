@@ -51,6 +51,17 @@ const deleteThread = async (channel, topMessageTs) => {
 
 app.message(linkRegex, async ({ message }) => {
     try {
+        if (!(await userIsAdmin(shortcut.user.id))) {
+            console.log("User isn't an admin, warning them.");
+            await app.client.chat.postEphemeral({
+                token: process.env.SLACK_OAUTH_TOKEN,
+                channel: shortcut.channel.id,
+                user: shortcut.user.id,
+                text: "Sorry, you can't do that!",
+            });
+            throw 'UserNotAuthed';
+        }
+
         await app.client.reactions.add({
             token: process.env.SLACK_OAUTH_TOKEN,
             timestamp: message.ts,
