@@ -22,8 +22,35 @@ const userIsAdmin = async (userId) => {
     }
 };
 
+const botInChannel = async (channel) => {
+    try {
+        const res = await app.client.conversations.info({
+            token: process.env.SLACK_OAUTH_TOKEN,
+            channel: channel,
+        });
+        return await res.channels.is_member;
+    } catch (err) {
+        console.error(err);
+    }
+};
+
+const joinChannel = async (channel) => {
+    try {
+        await app.client.conversations.join({
+            token: process.env.SLACK_OAUTH_TOKEN,
+            channel: channel,
+        });
+    } catch (err) {
+        console.error(err);
+    }
+};
+
 const deleteThread = async (channel, topMessageTs) => {
     try {
+        if (!(await botInChannel(channel))) {
+            console.log('Joining channel');
+            await JoinChannel(channel);
+        }
         console.log(
             `deleting for thread ${topMessageTs} in channel ${channel}`
         );
