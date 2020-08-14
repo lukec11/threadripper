@@ -76,49 +76,6 @@ const deleteThread = async (channel, topMessageTs) => {
     }
 };
 
-app.message(linkRegex, async ({ message }) => {
-    try {
-        if (!(await userIsAdmin(shortcut.user.id))) {
-            console.log("User isn't an admin, warning them.");
-            await app.client.chat.postEphemeral({
-                token: process.env.SLACK_OAUTH_TOKEN,
-                channel: shortcut.channel.id,
-                user: shortcut.user.id,
-                text: "Sorry, you can't do that!",
-            });
-            throw 'UserNotAuthed';
-        }
-
-        await app.client.reactions.add({
-            token: process.env.SLACK_OAUTH_TOKEN,
-            timestamp: message.ts,
-            name: 'beachball',
-            channel: message.channel,
-        });
-
-        const channelId = await message.text.match(linkRegex)[1];
-        const tsre = await message.text.match(linkRegex)[2];
-
-        const ts = `${tsre.substring(0, 10)}.${tsre.substring(10, 17)}`;
-
-        await deleteThread(channelId, ts);
-        await app.client.reactions.remove({
-            token: process.env.SLACK_OAUTH_TOKEN,
-            timestamp: message.ts,
-            channel: message.channel,
-            name: 'beachball',
-        });
-        app.client.reactions.add({
-            token: process.env.SLACK_OAUTH_TOKEN,
-            timestamp: message.ts,
-            channel: message.channel,
-            name: 'heavy_check_mark',
-        });
-    } catch (err) {
-        console.error(err);
-    }
-});
-
 app.shortcut('purge_thread', async ({ shortcut, ack, respond }) => {
     try {
         await ack();
