@@ -28,7 +28,7 @@ const botInChannel = async (channel) => {
             token: process.env.SLACK_OAUTH_TOKEN,
             channel: channel,
         });
-        return await res.channels.is_member;
+        return await res.channel.is_member;
     } catch (err) {
         console.error(err);
     }
@@ -49,7 +49,7 @@ const deleteThread = async (channel, topMessageTs) => {
     try {
         if (!(await botInChannel(channel))) {
             console.log('Joining channel');
-            await JoinChannel(channel);
+            await joinChannel(channel);
         }
         console.log(
             `deleting for thread ${topMessageTs} in channel ${channel}`
@@ -61,6 +61,11 @@ const deleteThread = async (channel, topMessageTs) => {
         })) {
             let m = await page.messages;
             for (const i of await m) {
+				// This checks if you've run it on a message in a thread, and gets the top level message instead
+				if (m.length === 1 && i.hasOwnProperty('thread_ts')) {
+					await deleteThread(channel, i.thread_ts);
+					break;
+				}
                 if ((await i.user) !== 'USLACKBOT') {
                     console.log(`Deleting ${i.ts} ("${i.text}")`);
                     await app.client.chat.delete({
