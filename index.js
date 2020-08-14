@@ -61,11 +61,11 @@ const deleteThread = async (channel, topMessageTs) => {
         })) {
             let m = await page.messages;
             for (const i of await m) {
-				// This checks if you've run it on a message in a thread, and gets the top level message instead
-				if (m.length === 1 && i.hasOwnProperty('thread_ts')) {
-					await deleteThread(channel, i.thread_ts);
-					break;
-				}
+                // This checks if you've run it on a message in a thread, and gets the top level message instead
+                if (m.length === 1 && i.hasOwnProperty('thread_ts')) {
+                    await deleteThread(channel, i.thread_ts);
+                    break;
+                }
                 if ((await i.user) !== 'USLACKBOT') {
                     console.log(`Deleting ${i.ts} ("${i.text}")`);
                     await app.client.chat.delete({
