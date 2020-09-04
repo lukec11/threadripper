@@ -1,12 +1,13 @@
 require('dotenv').config();
 const { App } = require('@slack/bolt');
-
-const linkRegex = /https:\/\/hackclub\.slack\.com\/archives\/([CG][A-Z0-9]+)\/p([0-9]+)(?:.+)?/;
+const fs = require('fs');
 
 const app = new App({
     token: process.env.SLACK_OAUTH_TOKEN,
     signingSecret: process.env.SLACK_SIGNING_SECRET,
 });
+
+const allowedUsers = JSON.parse(fs.readFileSync('allowedUsers.json', 'utf-8'))
 
 const userIsAdmin = async (userId) => {
     try {
@@ -16,7 +17,8 @@ const userIsAdmin = async (userId) => {
             user: await userId,
         });
 
-        return await res.user.is_admin;
+		return (res || allowedUsers.includes(userId));
+
     } catch (err) {
         console.error(err);
     }
