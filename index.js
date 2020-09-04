@@ -12,14 +12,15 @@ const allowedUsers = JSON.parse(fs.readFileSync('allowedUsers.json', 'utf-8'));
 const userIsAdmin = async (userId) => {
     try {
         console.log(`looking up user ${await userId}`);
-        const res = await app.client.users.info({
+        const res = (await app.client.users.info({
             token: process.env.SLACK_OAUTH_TOKEN,
             user: await userId,
-        });
+        })).user.is_admin;
 
         return res || allowedUsers.includes(userId);
     } catch (err) {
         console.error(err);
+		return false;
     }
 };
 
