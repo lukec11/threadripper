@@ -7,7 +7,7 @@ const app = new App({
     signingSecret: process.env.SLACK_SIGNING_SECRET,
 });
 
-const allowedUsers = JSON.parse(fs.readFileSync('allowedUsers.json', 'utf-8'))
+const allowedUsers = JSON.parse(fs.readFileSync('allowedUsers.json', 'utf-8'));
 
 const userIsAdmin = async (userId) => {
     try {
@@ -17,8 +17,7 @@ const userIsAdmin = async (userId) => {
             user: await userId,
         });
 
-		return (res || allowedUsers.includes(userId));
-
+        return res || allowedUsers.includes(userId);
     } catch (err) {
         console.error(err);
     }
