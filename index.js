@@ -64,7 +64,10 @@ const deleteThread = async (channel, topMessageTs) => {
       let m = await page.messages;
       for (const i of await m) {
         // This checks if you've run it on a message in a thread, and gets the top level message instead
-        if (m.length === 1 && i.hasOwnProperty('thread_ts')) {
+        if (
+          m.length === 1 &&
+          Object.prototype.hasOwnProperty.call(i, 'thread_ts')
+        ) {
           await deleteThread(channel, i.thread_ts);
           break;
         }
@@ -83,7 +86,7 @@ const deleteThread = async (channel, topMessageTs) => {
   }
 };
 
-app.shortcut('purge_thread', async ({ shortcut, ack, respond }) => {
+app.shortcut('purge_thread', async ({ shortcut, ack }) => {
   try {
     await ack();
     if (!(await userIsAdmin(shortcut.user.id))) {

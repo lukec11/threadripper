@@ -13,5 +13,9 @@
     "@slack/bolt": "^2.2.3",
     "dotenv": "^8.2.0",
     "fs": "0.0.1-security"
+  },
+  "devDependencies": {
+    "eslint": "^7.8.1",
+    "nodemon": "^2.0.4"
   }
 }
