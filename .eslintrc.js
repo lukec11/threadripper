@@ -2,16 +2,16 @@ module.exports = {
   env: {
     commonjs: false,
     es2021: true,
-    node: true
+    node: true,
   },
   extends: 'eslint:recommended',
   parserOptions: {
     ecmaVersion: 12,
-    sourceType: 'module'
+    sourceType: 'module',
   },
   rules: {
     'no-prototype-builtins': 'off',
-    'no-unused-vars': 'warning'
+    'no-unused-vars': 'warning',
   },
-  ignorePatterns: ['build/**/*']
+  ignorePatterns: ['build/**/*'],
 };
