@@ -10,7 +10,7 @@ export const userIsAdmin = async (userId) => {
     const res = (
       await app.client.users.info({
         token: process.env.SLACK_OAUTH_TOKEN,
-        user: userId,
+        user: userId
       })
     ).user.is_admin;
 
@@ -30,7 +30,7 @@ export const getUser = async (userid) => {
     return (
       await app.client.users.info({
         token: process.env.SLACK_OAUTH_TOKEN,
-        user: userid,
+        user: userid
       })
     ).user;
   } catch (err) {
@@ -46,7 +46,7 @@ export const botInChannel = async (channel) => {
   try {
     const res = await app.client.conversations.info({
       token: process.env.SLACK_OAUTH_TOKEN,
-      channel: channel,
+      channel: channel
     });
     return await res.channel.is_member;
   } catch (err) {
@@ -62,7 +62,7 @@ export const joinChannel = async (channel) => {
   try {
     await app.client.conversations.join({
       token: process.env.SLACK_OAUTH_TOKEN,
-      channel: channel,
+      channel: channel
     });
   } catch (err) {
     console.error(err);
@@ -82,7 +82,7 @@ export const getMessage = async (channel, ts) => {
       inclusive: 1,
       latest: ts,
       oldest: ts,
-      limit: 1,
+      limit: 1
     });
 
     return res.messages[0] || new Error('No messages found');
@@ -105,7 +105,7 @@ const getTopLevel = async (channel, ts) => {
     await app.client.conversations.replies({
       token: process.env.SLACK_OAUTH_TOKEN,
       channel: channel,
-      ts: ts,
+      ts: ts
     })
   ).messages[0];
 
@@ -140,7 +140,7 @@ export const deleteThread = async (channel, ts) => {
     for await (let page of app.client.paginate('conversations.replies', {
       channel: channel,
       token: process.env.SLACK_OAUTH_TOKEN,
-      ts: parent_ts,
+      ts: parent_ts
     })) {
       // This loops through each page
       let m = await page.messages;
@@ -154,7 +154,7 @@ export const deleteThread = async (channel, ts) => {
         await app.client.chat.delete({
           token: process.env.SLACK_ADMIN_TOKEN,
           ts: i.ts,
-          channel: channel,
+          channel: channel
         });
       }
     }
@@ -185,15 +185,15 @@ export const logDeletion = async (channel, ts) => {
         author_icon: parent_user.profile.image_512,
         color: 'D0D0D0',
         text: parent_message.text,
-        footer: `From a ripped thread in <#${channel}>`,
-      },
+        footer: `From a ripped thread in <#${channel}>`
+      }
     ];
 
     // Post message to admin channel
     await app.client.chat.postMessage({
       token: process.env.SLACK_OAUTH_TOKEN,
       channel: process.env.SLACK_ADMIN_CHANNEL,
-      attachments: shared_message_attachment,
+      attachments: shared_message_attachment
     });
   } catch (err) {
     console.error(err);

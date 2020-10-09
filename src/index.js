@@ -4,7 +4,7 @@ const fs = require('fs');
 
 export const app = new App({
   token: process.env.SLACK_OAUTH_TOKEN,
-  signingSecret: process.env.SLACK_SIGNING_SECRET,
+  signingSecret: process.env.SLACK_SIGNING_SECRET
 });
 
 export const allowedUsers = JSON.parse(
