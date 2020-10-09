@@ -1,21 +1,30 @@
 {
   "name": "threadripper",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "dev": "nodemon --exec babel-node src/index.js --trace-warnings",
+    "clean": "rm -rf ./build",
+    "babel-build": "babel src --out-dir build --source-maps",
+    "build": "npm run clean; npm run babel-build",
+    "start": "node build/index.js"
   },
   "author": "lukec11 <me@lukec.me>",
   "license": "MIT",
   "dependencies": {
+    "@babel/runtime": "^7.11.2",
     "@slack/bolt": "^2.2.3",
     "dotenv": "^8.2.0",
     "fs": "0.0.1-security"
   },
   "devDependencies": {
-    "eslint": "^7.8.1",
+    "@babel/cli": "^7.11.6",
+    "@babel/core": "^7.11.6",
+    "@babel/node": "^7.10.5",
+    "@babel/plugin-transform-runtime": "^7.11.5",
+    "@babel/preset-env": "^7.11.5",
+    "eslint": "^7.10.0",
     "nodemon": "^2.0.4"
   }
 }
