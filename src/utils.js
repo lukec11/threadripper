@@ -167,8 +167,9 @@ export const deleteThread = async (channel, ts) => {
  * Logs the original top level message to an admin channel
  * @param {string} channel | Channel ID of original message (not admin channel)
  * @param {string} ts | ts of ripped message
+ * @param {string} deleter | user ID of the person deleting a message
  */
-export const logDeletion = async (channel, ts) => {
+export const logDeletion = async (channel, ts, deleter) => {
   try {
     // Extract information from the channel & ts
     const parent_ts = await getTopLevel(channel, ts);
@@ -195,7 +196,8 @@ export const logDeletion = async (channel, ts) => {
     await app.client.chat.postMessage({
       token: process.env.SLACK_OAUTH_TOKEN,
       channel: process.env.SLACK_ADMIN_CHANNEL,
-      attachments: shared_message_attachment
+      attachments: shared_message_attachment,
+      text: `<@${deleter}> deleted a thread:`
     });
   } catch (err) {
     console.error(err);
