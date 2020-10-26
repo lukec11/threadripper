@@ -24,7 +24,7 @@ FROM base AS release
 
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/build ./build
-COPY --from=builder /app/allowedUsers.json ./allowedUsers.json
+COPY --from=builder /app/static ./static
 
 USER node
 

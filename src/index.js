@@ -8,7 +8,7 @@ export const app = new App({
 });
 
 export const allowedUsers = JSON.parse(
-  fs.readFileSync(__dirname + '/../allowedUsers.json', 'utf-8')
+  fs.readFileSync(__dirname + '/../static/allowedUsers.json', 'utf-8')
 );
 
 import { purgeThreadHandler } from './handlers.js';
