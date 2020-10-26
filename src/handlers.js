@@ -3,7 +3,7 @@ import {
   joinChannel,
   userIsAdmin,
   logDeletion,
-  deleteThread,
+  deleteThread
 } from './utils.js';
 import 'dotenv/config';
 
@@ -29,7 +29,7 @@ export const purgeThreadHandler = async ({ shortcut, ack, client }) => {
         token: process.env.SLACK_OAUTH_TOKEN,
         channel: shortcut_channel,
         user: shortcut_user,
-        text: "Sorry, you can't do that!",
+        text: "Sorry, you can't do that!"
       });
 
       console.log(`${shortcut_user} wasn't authed!`);
