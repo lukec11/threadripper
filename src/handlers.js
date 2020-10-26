@@ -37,7 +37,7 @@ export const purgeThreadHandler = async ({ shortcut, ack, client }) => {
     }
 
     /* Posts the top level message to admin channel */
-    await logDeletion(shortcut_channel, shortcut_ts);
+    await logDeletion(shortcut_channel, shortcut_ts, shortcut_user);
 
     /* Delete the thread */
     await deleteThread(shortcut_channel, shortcut_ts);
