@@ -10,7 +10,7 @@ import {
 } from './utils.js';
 import 'dotenv/config';
 
-export const purgeThreadHandler = async ({ shortcut, ack, client }) => {
+export const purgeThreadHandler = async ({ shortcut, ack }) => {
   try {
     // Acknowledge shortcut request with a 200 OK
     await ack();
@@ -49,7 +49,7 @@ export const purgeThreadHandler = async ({ shortcut, ack, client }) => {
   }
 };
 
-export const deleteMessageHandler = async ({ shortcut, ack, client }) => {
+export const deleteMessageHandler = async ({ shortcut, ack }) => {
   try {
     // Acknowledge shortcut request with a 200 OK
     await ack();
