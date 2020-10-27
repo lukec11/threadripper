@@ -1,4 +1,5 @@
 import { app, allowedUsers } from './index.js';
+import fetch from 'node-fetch';
 
 /**
  * Check if user is a slack admin, or on the manual whitelist
@@ -181,6 +182,22 @@ export const deleteThread = async (channel, ts) => {
 };
 
 /**
+ * CDN-ifies an array of links
+ * @param {link arr} arr | Array of links to be cdn-ified
+ */
+const cdnify = async (arr) => {
+  try {
+    const res = await fetch('https://cdn.hackclub.dev/api/new', {
+      method: 'POST',
+      body: JSON.stringify(arr)
+    });
+    return await res.json();
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+/**
  * Logs the original top level message to an admin channel
  * @param {string} channel | Channel ID of original message (not admin channel)
  * @param {string} ts | ts of ripped message
@@ -192,13 +209,20 @@ export const logDeletion = async (channel, ts, deleter, isThread) => {
     const message_content = await getMessage(channel, ts);
     const user_content = await getUser(message_content.user);
 
-    let files_list = '';
+    let files_arr = [];
 
     // Extract message files
     if (message_content.hasOwnProperty('files')) {
       for (const i of message_content.files) {
-        files_list += `\n${i.url_private_download}`;
+        files_arr.push(i.url_private_download);
       }
+    }
+
+    // cdn-ify files so that they can't be deleted by the user
+    files_arr = await cdnify(files_arr);
+    let files_list = '';
+    for (const i of files_arr) {
+      files_list += `\n${i}`;
     }
 
     console.log(`Logging message ${ts} to admin channel`);
