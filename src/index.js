@@ -11,9 +11,10 @@ export const allowedUsers = JSON.parse(
   fs.readFileSync(__dirname + '/../static/allowedUsers.json', 'utf-8')
 );
 
-import { purgeThreadHandler } from './handlers.js';
+import { purgeThreadHandler, deleteMessageHandler } from './handlers.js';
 
 app.shortcut('purge_thread', purgeThreadHandler);
+app.shortcut('delete_msg', deleteMessageHandler);
 
 (async () => {
   await app.start(3000);
