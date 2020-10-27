@@ -190,9 +190,16 @@ export const logDeletion = async (channel, ts, deleter, isThread) => {
   try {
     // Extract information from the channel & ts
     const message_content = await getMessage(channel, ts);
-
-    console.log(message_content);
     const user_content = await getUser(message_content.user);
+
+    let files_list = '';
+
+    // Extract message files
+    if (message_content.hasOwnProperty('files')) {
+      for (const i of message_content.files) {
+        files_list += `\n${i.url_private_download}`;
+      }
+    }
 
     console.log(`Logging message ${ts} to admin channel`);
 
@@ -212,13 +219,22 @@ export const logDeletion = async (channel, ts, deleter, isThread) => {
       }
     ];
 
-    // Post message to admin channel
+    // Post text message to admin channel
     await app.client.chat.postMessage({
       token: process.env.SLACK_OAUTH_TOKEN,
       channel: process.env.SLACK_ADMIN_CHANNEL,
       attachments: shared_message_attachment,
       text: `<@${deleter}> deleted a ${isThread ? 'thread' : 'message'}:`
     });
+
+    // post file message
+    if (files_list) {
+      await app.client.chat.postMessage({
+        token: process.env.SLACK_OAUTH_TOKEN,
+        channel: process.env.SLACK_ADMIN_CHANNEL,
+        text: '>>> Files:' + files_list
+      });
+    }
   } catch (err) {
     console.error(err);
   }
