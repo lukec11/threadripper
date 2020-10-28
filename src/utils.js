@@ -79,10 +79,6 @@ export const getMessage = async (channel, ts) => {
     const res = await app.client.conversations.replies({
       token: process.env.SLACK_OAUTH_TOKEN,
       channel: channel,
-      // inclusive: 1,
-      // latest: ts,
-      // oldest: ts,
-      // limit: 1
       ts: ts
     });
 
