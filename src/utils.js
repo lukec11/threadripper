@@ -197,7 +197,7 @@ export const logDeletion = async (channel, ts, deleter, isThread) => {
     // Extract message files
     if (message_content.hasOwnProperty('files')) {
       for (const i of message_content.files) {
-        files_list += `\n${i.url_private_download}`;
+        files_list += `\n${i.url_private}`;
       }
     }
 
