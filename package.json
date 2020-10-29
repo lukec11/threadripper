@@ -16,7 +16,8 @@
     "@babel/runtime": "^7.11.2",
     "@slack/bolt": "^2.2.3",
     "dotenv": "^8.2.0",
-    "fs": "0.0.1-security"
+    "fs": "0.0.1-security",
+    "node-fetch": "^2.6.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.11.6",

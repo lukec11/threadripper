@@ -11,7 +11,7 @@ module.exports = {
   },
   rules: {
     'no-prototype-builtins': 'off',
-    'no-unused-vars': 'warning'
+    'no-unused-vars': 1
   },
   ignorePatterns: ['build/**/*']
 };

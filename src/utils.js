@@ -76,13 +76,14 @@ export const joinChannel = async (channel) => {
  */
 export const getMessage = async (channel, ts) => {
   try {
-    const res = await app.client.conversations.history({
+    const res = await app.client.conversations.replies({
       token: process.env.SLACK_OAUTH_TOKEN,
       channel: channel,
-      inclusive: 1,
-      latest: ts,
-      oldest: ts,
-      limit: 1
+      // inclusive: 1,
+      // latest: ts,
+      // oldest: ts,
+      // limit: 1
+      ts: ts
     });
 
     return res.messages[0] || new Error('No messages found');
@@ -97,7 +98,7 @@ export const getMessage = async (channel, ts) => {
  * @param {string} channel | Slack channel of the message
  * @param {string} ts | Slack ts of the message
  */
-const getTopLevel = async (channel, ts) => {
+export const getTopLevel = async (channel, ts) => {
   // Parent message - can be identified by a "reply_count" identifier from conversations.replies, but only if it has threaded messages
   // Threaded message - can be identified by a "parent_user_id" identifier from conversations.replies
   // Message without a thread - can be identified by no thread_ts parameter (both the others have one)
@@ -122,6 +123,23 @@ const getTopLevel = async (channel, ts) => {
   if (res.hasOwnProperty('parent_user_id')) {
     // It's a message in a thread, so we have to return the thread_ts value to get the top thread's ts.
     return res.thread_ts;
+  }
+};
+
+/**
+ *
+ * @param {string} {channel} | Channel in which the message is located
+ * @param {number} {ts} | ts of message to delete
+ */
+export const deleteMessage = async ({ channel, ts }) => {
+  try {
+    await app.client.chat.delete({
+      token: process.env.SLACK_ADMIN_TOKEN,
+      channel: channel,
+      ts: ts
+    });
+  } catch (err) {
+    console.error(err);
   }
 };
 
@@ -151,8 +169,7 @@ export const deleteThread = async (channel, ts) => {
           continue;
         }
         console.log(`Deleting ${i.ts} ("${i.text}")`);
-        await app.client.chat.delete({
-          token: process.env.SLACK_ADMIN_TOKEN,
+        await deleteMessage({
           ts: i.ts,
           channel: channel
         });
@@ -169,35 +186,67 @@ export const deleteThread = async (channel, ts) => {
  * @param {string} ts | ts of ripped message
  * @param {string} deleter | user ID of the person deleting a message
  */
-export const logDeletion = async (channel, ts, deleter) => {
+export const logDeletion = async (channel, ts, deleter, isThread) => {
   try {
     // Extract information from the channel & ts
-    const parent_ts = await getTopLevel(channel, ts);
-    const parent_message = await getMessage(channel, parent_ts);
-    const parent_user = await getUser(parent_message.user);
+    const message_content = await getMessage(channel, ts);
+    const user_content = await getUser(message_content.user);
 
-    console.log(`Logging parent message ${parent_ts} to admin channel`);
+    let files_list = '';
+
+    // Extract message files
+    if (message_content.hasOwnProperty('files')) {
+      for (const i of message_content.files) {
+        files_list += `\n${i.url_private_download}`;
+      }
+    }
+
+    console.log(`Logging message ${ts} to admin channel`);
 
     // Build attachment with name & text
     const shared_message_attachment = [
       {
         author_name:
-          parent_user.profile.display_name_normalized ||
-          parent_user.profile.real_name_normalized, // Add real_name_normalized option for bots
-        author_link: `slack://user?team=T0266FRGM&id=${parent_user.id}`,
-        author_icon: parent_user.profile.image_512,
+          user_content.profile.display_name_normalized ||
+          user_content.profile.real_name_normalized, // Add real_name_normalized option for bots
+        author_link: `slack://user?team=T0266FRGM&id=${user_content.id}`,
+        author_icon: user_content.profile.image_512,
         color: 'D0D0D0',
-        text: parent_message.text,
-        footer: `From a ripped parent in <#${channel}>`
+        text: message_content.text,
+        footer: `From a ${
+          isThread ? 'ripped parent' : 'deleted message'
+        } in <#${channel}>`
       }
     ];
 
-    // Post message to admin channel
+    // Post text message to admin channel
     await app.client.chat.postMessage({
       token: process.env.SLACK_OAUTH_TOKEN,
       channel: process.env.SLACK_ADMIN_CHANNEL,
       attachments: shared_message_attachment,
-      text: `<@${deleter}> deleted a thread:`
+      text: `<@${deleter}> deleted a ${isThread ? 'thread' : 'message'}:`
+    });
+
+    // post file message
+    if (files_list) {
+      await app.client.chat.postMessage({
+        token: process.env.SLACK_OAUTH_TOKEN,
+        channel: process.env.SLACK_ADMIN_CHANNEL,
+        text: '>>> Files:' + files_list
+      });
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const warnUser = async (user, channel, message) => {
+  try {
+    return await app.client.chat.postEphemeral({
+      token: process.env.SLACK_OAUTH_TOKEN,
+      channel: channel,
+      text: message,
+      user: user
     });
   } catch (err) {
     console.error(err);
