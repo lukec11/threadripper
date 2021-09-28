@@ -14,7 +14,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.11.2",
-    "@slack/bolt": "^2.2.3",
+    "@slack/bolt": "^3.7.0",
     "dotenv": "^8.2.0",
     "fs": "0.0.1-security",
     "node-fetch": "^2.6.1"
